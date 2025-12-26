@@ -1,7 +1,9 @@
-import React from 'react';
-import { Container, Box, Grid, Typography, Alert } from '@mui/material';
+import React, { useState } from 'react';
+import { Container, Box, Grid, Typography, Alert, Button } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
 import { VideoCard } from '../components/video/VideoCard';
 import { Loader } from '../components/ui/Loader';
+import { AddVideoModal } from '../components/video/AddVideoModal';
 import { useVideos } from '../hooks/useVideos';
 import '../styles/dashboard.css';
 
@@ -14,7 +16,8 @@ import '../styles/dashboard.css';
  * - Large Desktop (1200px+): 4 columns
  */
 export const Dashboard: React.FC = () => {
-  const { videos, loading, error } = useVideos();
+  const { videos, loading, error, refetch } = useVideos();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   console.log('Videos:', videos);
 
@@ -23,26 +26,43 @@ export const Dashboard: React.FC = () => {
     <Container maxWidth="xl">
       {/* Page Header */}
       <Box className="dashboard-header">
-        <Typography
-          variant="h1"
-          component="h1"
-          className="dashboard-title"
-          sx={{
-            fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
-          }}
-        >
-          Video Library
-        </Typography>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          className="dashboard-subtitle"
-          sx={{
-            fontSize: { xs: '0.95rem', sm: '1rem', md: '1.1rem' },
-          }}
-        >
-          Explore our collection of videos and discover amazing content
-        </Typography>
+        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
+          <Box>
+            <Typography
+              variant="h1"
+              component="h1"
+              className="dashboard-title"
+              sx={{
+                fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
+              }}
+            >
+              Video Library
+            </Typography>
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              className="dashboard-subtitle"
+              sx={{
+                fontSize: { xs: '0.95rem', sm: '1rem', md: '1.1rem' },
+              }}
+            >
+              Explore our collection of videos and discover amazing content
+            </Typography>
+          </Box>
+          <Button
+            variant="contained"
+            color="primary"
+            startIcon={<AddIcon />}
+            onClick={() => setIsModalOpen(true)}
+            sx={{
+              whiteSpace: 'nowrap',
+              padding: { xs: '8px 12px', sm: '10px 16px' },
+              fontSize: { xs: '0.875rem', sm: '1rem' },
+            }}
+          >
+            Add Video
+          </Button>
+        </Box>
       </Box>
 
       {/* Loading State */}
@@ -87,6 +107,13 @@ export const Dashboard: React.FC = () => {
           ))}
         </Grid>
       )}
+
+      {/* Add Video Modal */}
+      <AddVideoModal
+        open={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSuccess={() => refetch()}
+      />
     </Container>
   );
 };

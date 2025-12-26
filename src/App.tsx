@@ -7,8 +7,11 @@ import {
   Toolbar,
   Typography,
   Container,
+  Button,
 } from '@mui/material';
 import { Outlet } from 'react-router-dom';
+import { useAuth } from './hooks/useAuth';
+import { logout } from './services/authService';
 import { theme } from './theme/theme';
 import './styles/global.css';
 import './styles/app.css';
@@ -18,6 +21,12 @@ import './styles/app.css';
  * Wraps all pages and provides consistent layout
  */
 const App: React.FC = () => {
+  const { user } = useAuth();
+
+  const handleLogout = async () => {
+    await logout();
+  };
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -25,8 +34,8 @@ const App: React.FC = () => {
         {/* Header */}
         <AppBar position="sticky" elevation={1}>
           <Toolbar className="app-toolbar">
-            <Container maxWidth="lg">
-              <Box className="app-toolbar-content">
+            <Container maxWidth="lg" sx={{ width: '100%' }}>
+              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography
                   variant="h4"
                   component="div"
@@ -41,11 +50,32 @@ const App: React.FC = () => {
                   Video view
                 </Typography>
 
-                {/* Future: Auth menu can go here */}
-                {/* <Box sx={{ display: 'flex', gap: 2 }}>
-                  <Button color="inherit">Login</Button>
-                  <Button color="inherit">Sign Up</Button>
-                </Box> */}
+                {/* User info and logout button */}
+                {user && (
+                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+                    <Typography
+                      variant="body1"
+                      sx={{ color: 'white', fontWeight: 500 }}
+                    >
+                      {user.email}
+                    </Typography>
+                    <Button
+                      color="inherit"
+                      variant="outlined"
+                      size="small"
+                      onClick={handleLogout}
+                      sx={{
+                        borderColor: 'rgba(255,255,255,0.5)',
+                        '&:hover': {
+                          borderColor: 'white',
+                          backgroundColor: 'rgba(255,255,255,0.1)',
+                        },
+                      }}
+                    >
+                      Logout
+                    </Button>
+                  </Box>
+                )}
               </Box>
             </Container>
           </Toolbar>

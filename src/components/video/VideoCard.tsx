@@ -92,6 +92,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
               sandbox="allow-same-origin allow-scripts allow-presentation"
               onContextMenu={(e) => e.preventDefault()}
             />
+            <Box className="video-modal-overlay" />
           </Box>
         </Box>
       </Modal>

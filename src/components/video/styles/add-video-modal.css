@@ -1,0 +1,10 @@
+.add-video-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 100%;
+}
+
+.add-video-form .MuiTextField-root {
+  width: 100%;
+}

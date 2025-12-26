@@ -1,0 +1,21 @@
+.modal-header {
+  position: relative;
+  padding: 16px;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-title {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.25rem;
+}
+
+.modal-content {
+  padding: 24px;
+  min-height: 200px;
+}
+
+.modal-actions {
+  padding: 16px;
+  gap: 8px;
+}
