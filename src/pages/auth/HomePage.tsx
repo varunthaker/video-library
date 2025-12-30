@@ -1,8 +1,8 @@
 import React from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { Loader } from '../../components/ui/Loader';
-import LoginPage from './LoginPage';
+import { useAuth } from '@clerk/clerk-react';
+import { CircularProgress, Box } from '@mui/material';
 import { Dashboard } from '../Dashboard';
+import LoginPage from './LoginPage';
 import './styles/HomePage.css';
 
 /**
@@ -10,17 +10,17 @@ import './styles/HomePage.css';
  * and Dashboard when user is authenticated
  */
 const HomePage: React.FC = () => {
-  const { user, loading } = useAuth();
+  const { isSignedIn, isLoaded } = useAuth();
 
-  if (loading) {
+  if (!isLoaded) {
     return (
-      <div className="home-page-loading">
-        <Loader loading={true} message="Loading..." />
-      </div>
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+        <CircularProgress />
+      </Box>
     );
   }
 
-  return user ? <Dashboard /> : <LoginPage />;
+  return isSignedIn ? <Dashboard /> : <LoginPage />;
 };
 
 export default HomePage;

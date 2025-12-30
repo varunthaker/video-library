@@ -2,6 +2,7 @@ import { RouteObject } from 'react-router-dom';
 import { NotFound } from '../pages/NotFound';
 import HomePage from '../pages/auth/HomePage';
 import LoginPage from '../pages/auth/LoginPage';
+import { Dashboard } from '../pages/Dashboard';
 
 // Public routes
 export const publicRoutes: RouteObject[] = [
@@ -18,7 +19,10 @@ export const publicRoutes: RouteObject[] = [
 
 // Protected routes (for future authentication)
 export const protectedRoutes: RouteObject[] = [
-  // Add authenticated routes here in the future
+  {
+    path: '/dashboard',
+    element: <Dashboard />,
+  },
 ];
 
 // Fallback route

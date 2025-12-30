@@ -7,11 +7,10 @@ import {
   Toolbar,
   Typography,
   Container,
-  Button,
 } from '@mui/material';
 import { Outlet } from 'react-router-dom';
-import { useAuth } from './hooks/useAuth';
-import { logout } from './services/authService';
+import { useAuth } from '@clerk/clerk-react';
+import { UserButton } from '@clerk/clerk-react';
 import { theme } from './theme/theme';
 import './styles/global.css';
 import './styles/app.css';
@@ -21,11 +20,7 @@ import './styles/app.css';
  * Wraps all pages and provides consistent layout
  */
 const App: React.FC = () => {
-  const { user } = useAuth();
-
-  const handleLogout = async () => {
-    await logout();
-  };
+  const { isSignedIn } = useAuth();
 
   return (
     <ThemeProvider theme={theme}>
@@ -50,31 +45,17 @@ const App: React.FC = () => {
                   Video view
                 </Typography>
 
-                {/* User info and logout button */}
-                {user && (
-                  <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-                    <Typography
-                      variant="body1"
-                      sx={{ color: 'white', fontWeight: 500 }}
-                    >
-                      {user.email}
-                    </Typography>
-                    <Button
-                      color="inherit"
-                      variant="outlined"
-                      size="small"
-                      onClick={handleLogout}
-                      sx={{
-                        borderColor: 'rgba(255,255,255,0.5)',
-                        '&:hover': {
-                          borderColor: 'white',
-                          backgroundColor: 'rgba(255,255,255,0.1)',
-                        },
-                      }}
-                    >
-                      Logout
-                    </Button>
-                  </Box>
+                {/* User Button Component - displays user profile and settings */}
+                {isSignedIn && (
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        userButtonAvatarBox: 'w-10 h-10',
+                        userButtonTrigger:
+                          'focus-visible:outline-none rounded-full',
+                      },
+                    }}
+                  />
                 )}
               </Box>
             </Container>

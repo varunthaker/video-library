@@ -1,83 +1,42 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../../hooks/useAuth';
-import { loginWithEmail } from '../../services/authService';
-import Button from '../../components/ui/Button';
-import Input from '../../components/ui/Input';
+import React from 'react';
+import { useAuth } from '@clerk/clerk-react';
+import { SignIn } from '@clerk/clerk-react';
+import { Container, Box, CircularProgress } from '@mui/material';
 import './styles/LoginPage.css';
 
 const LoginPage: React.FC = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-  const { user } = useAuth();
-  const navigate = useNavigate();
+  const { isLoaded } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      navigate('/');
-    }
-  }, [user, navigate]);
-
-  const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    const response = await loginWithEmail(email, password);
-    setLoading(false);
-
-    if (!response.success) {
-      setError(response.error?.message || 'Login failed');
-    }
-  };
+  if (!isLoaded) {
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '80vh' }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
-    <div className="login-page">
-      <div className="login-container">
-        <form onSubmit={handleLogin} className="login-form">
-          <h2 className="login-title">Login</h2>
-          
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            disabled={loading}
-          />
-
-          <Input
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            disabled={loading}
-          />
-
-          {error && <div className="login-error">{error}</div>}
-
-          <Button
-            type="submit"
-            disabled={loading}
-            fullWidth
-            variant="contained"
-            color="primary"
-            size="large"
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </Button>
-
-          <div className="login-footer">
-            <p>
-              <a href="/reset-password">Forgot password?</a>
-            </p>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Container maxWidth="sm">
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+          minHeight: '80vh',
+          gap: 2,
+        }}
+      >
+        <SignIn
+          appearance={{
+            elements: {
+              rootBox: 'w-full',
+              card: 'w-full shadow-lg',
+            },
+          }}
+        />
+      </Box>
+    </Container>
   );
 };
 
