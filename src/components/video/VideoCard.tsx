@@ -9,7 +9,6 @@ import {
   IconButton,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
-import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import { Video } from '../../types/video';
 import { getYouTubeEmbedUrl } from '../../utils/extractYouTubeId';
 import './styles/video-card.css';
@@ -20,7 +19,6 @@ export interface VideoCardProps {
 
 /**
  * VideoCard component displaying video with thumbnail and modal player
- * Responsive and mobile-friendly
  */
 export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -37,22 +35,17 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
   return (
     <>
       <Card className="video-card">
-        {/* Thumbnail with play button overlay */}
-        <Box className="video-card-thumbnail-container">
+        {/* Thumbnail clickable area */}
+        <Box 
+          className="video-card-thumbnail-container"
+          onClick={handleOpenModal}
+        >
           <CardMedia
             component="img"
             image={thumbnailUrl}
             alt={video.title}
             className="video-card-thumbnail"
           />
-          <Box
-            onClick={handleOpenModal}
-            className="video-card-play-overlay"
-          >
-            <IconButton className="video-card-play-button">
-              <PlayArrowIcon sx={{ fontSize: 32, color: 'primary.main' }} />
-            </IconButton>
-          </Box>
         </Box>
 
         {/* Card content */}
@@ -88,11 +81,8 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
               src={getYouTubeEmbedUrl(video.youtube_video_id)}
               title={video.title}
               allowFullScreen
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-              sandbox="allow-same-origin allow-scripts allow-presentation"
-              onContextMenu={(e) => e.preventDefault()}
+              allow="autoplay; encrypted-media; fullscreen"
             />
-            <Box className="video-modal-overlay" />
           </Box>
         </Box>
       </Modal>
