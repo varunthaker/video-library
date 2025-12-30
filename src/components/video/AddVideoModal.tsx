@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Box, TextField, Alert } from '@mui/material';
+import { Box, Alert } from '@mui/material';
+import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
 import { createVideo } from '../../services/videoService';
 import { extractYouTubeId } from '../../utils/extractYouTubeId';
@@ -95,26 +96,20 @@ export const AddVideoModal: React.FC<AddVideoModalProps> = ({
           </Alert>
         )}
 
-        <TextField
-          fullWidth
+        <Input
           label="Video Title"
           placeholder="Enter video title"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
           disabled={loading}
-          sx={{ marginBottom: 2 }}
-          variant="outlined"
         />
 
-        <TextField
-          fullWidth
+        <Input
           label="YouTube Link"
           placeholder="Enter YouTube URL or video ID"
           value={youtubeLink}
           onChange={(e) => setYoutubeLink(e.target.value)}
           disabled={loading}
-          variant="outlined"
-          helperText="Supports youtube.com/watch?v=ID, youtu.be/ID, or just the video ID"
         />
       </Box>
     </Modal>

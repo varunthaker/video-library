@@ -1,13 +1,5 @@
-import React from 'react';
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-  Box,
-  IconButton,
-} from '@mui/material';
+import React, { useEffect } from 'react';
+import { Button, Box } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import './styles/modal.css';
 
@@ -23,9 +15,25 @@ interface ModalProps {
   maxWidth?: 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 }
 
+type ModalSizeMap = {
+  xs: string;
+  sm: string;
+  md: string;
+  lg: string;
+  xl: string;
+};
+
+const sizeMap: ModalSizeMap = {
+  xs: 'modal--sm',
+  sm: 'modal--sm',
+  md: 'modal--md',
+  lg: 'modal--lg',
+  xl: 'modal--lg',
+};
+
 /**
  * Reusable Modal component
- * Centered on the page with customizable content
+ * Accessible modal dialog with focus management and smooth animations
  */
 export const Modal: React.FC<ModalProps> = ({
   open,
@@ -38,59 +46,77 @@ export const Modal: React.FC<ModalProps> = ({
   loading = false,
   maxWidth = 'sm',
 }) => {
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (open) {
+      document.body.style.overflow = 'hidden';
+      return () => {
+        document.body.style.overflow = '';
+      };
+    }
+  }, [open]);
+
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      onClose();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+    }
+  };
+
+  if (!open) return null;
+
+  const modalSizeClass = sizeMap[maxWidth];
+
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth={maxWidth}
-      fullWidth
-      PaperProps={{
-        sx: {
-          borderRadius: '8px',
-          boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2)',
-        },
-      }}
+    <div
+      className="modal-overlay"
+      onClick={handleBackdropClick}
+      onKeyDown={handleKeyDown}
+      role="presentation"
     >
-      <Box className="modal-header">
-        <DialogTitle className="modal-title">{title}</DialogTitle>
-        <IconButton
-          aria-label="close"
-          onClick={onClose}
-          sx={{
-            position: 'absolute',
-            right: 8,
-            top: 8,
-            color: 'text.secondary',
-          }}
-          disabled={loading}
-        >
-          <CloseIcon />
-        </IconButton>
-      </Box>
-
-      <DialogContent dividers className="modal-content">
-        {children}
-      </DialogContent>
-
-      {onSubmit && (
-        <DialogActions className="modal-actions">
-          <Button
+      <div className={`modal ${modalSizeClass}`} role="dialog" aria-modal="true">
+        <div className="modal-header">
+          <h2 className="modal-title">{title}</h2>
+          <button
+            className="modal-close"
             onClick={onClose}
-            disabled={loading}
-            variant="outlined"
-          >
-            {closeText}
-          </Button>
-          <Button
-            onClick={onSubmit}
-            variant="contained"
-            color="primary"
+            aria-label="Close modal"
+            type="button"
             disabled={loading}
           >
-            {loading ? 'Loading...' : submitText}
-          </Button>
-        </DialogActions>
-      )}
-    </Dialog>
+            <CloseIcon sx={{ width: 20, height: 20 }} />
+          </button>
+        </div>
+
+        <Box className="modal-content">{children}</Box>
+
+        {onSubmit && (
+          <Box className="modal-actions">
+            <Button
+              onClick={onClose}
+              disabled={loading}
+              variant="outlined"
+              size="small"
+            >
+              {closeText}
+            </Button>
+            <Button
+              onClick={onSubmit}
+              variant="contained"
+              color="primary"
+              disabled={loading}
+              size="small"
+            >
+              {loading ? 'Loading...' : submitText}
+            </Button>
+          </Box>
+        )}
+      </div>
+    </div>
   );
 };

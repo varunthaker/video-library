@@ -42,7 +42,7 @@ const App: React.FC = () => {
                     backgroundClip: 'text',
                   }}
                 >
-                  Video view
+                  Hariprabodham Smrutis
                 </Typography>
 
                 {/* User Button Component - displays user profile and settings */}
@@ -89,7 +89,7 @@ const App: React.FC = () => {
               align="center"
               className="app-footer-text"
             >
-              © {new Date().getFullYear()} VideView. All rights reserved.
+              © {new Date().getFullYear()} Hariprabodham Germany. All rights reserved.
             </Typography>
           </Container>
         </Box>

@@ -1,5 +1,6 @@
 import React from 'react';
 import MuiButton, { ButtonProps as MuiButtonProps } from '@mui/material/Button';
+import './styles/button.css';
 
 export interface ButtonProps extends MuiButtonProps {
   children: React.ReactNode;
@@ -11,11 +12,12 @@ export interface ButtonProps extends MuiButtonProps {
  * Reusable Button component wrapping Material UI Button
  */
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ children, loading = false, disabled, ...props }, ref) => {
+  ({ children, loading = false, disabled, className, ...props }, ref) => {
     return (
       <MuiButton
         ref={ref}
         disabled={disabled || loading}
+        className={`app-button ${className || ''}`}
         {...props}
       >
         {children}
