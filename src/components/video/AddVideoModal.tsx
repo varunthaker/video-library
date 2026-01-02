@@ -5,6 +5,7 @@ import { Modal } from '../ui/Modal';
 import { createVideo } from '../../services/videoService';
 import { extractYouTubeId } from '../../utils/extractYouTubeId';
 import './styles/add-video-modal.css';
+import { useAuth } from '@clerk/clerk-react';
 
 interface AddVideoModalProps {
   open: boolean;
@@ -25,6 +26,8 @@ export const AddVideoModal: React.FC<AddVideoModalProps> = ({
   const [youtubeLink, setYoutubeLink] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const {userId} = useAuth();
 
   const handleClose = () => {
     setTitle('');
@@ -58,9 +61,8 @@ export const AddVideoModal: React.FC<AddVideoModalProps> = ({
     try {
       await createVideo({
         title: title.trim(),
-        description: '',
         youtube_video_id: youtubeId,
-        is_active: true,
+        created_by: userId || '',
       });
 
       // Reset form and close modal

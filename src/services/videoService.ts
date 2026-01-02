@@ -11,7 +11,6 @@ export async function getAllVideos(): Promise<Video[]> {
     const { data, error } = await supabase
       .from(VIDEOS_TABLE)
       .select('*')
-      .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
