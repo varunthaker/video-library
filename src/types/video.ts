@@ -10,4 +10,5 @@ export interface VideoFormData {
   title: string;
   youtube_video_id: string;
   created_by: string;
+  theme_ids: string[];
 }

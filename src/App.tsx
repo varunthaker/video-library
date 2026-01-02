@@ -6,7 +6,6 @@ import {
   AppBar,
   Toolbar,
   Typography,
-  Container,
 } from '@mui/material';
 import { Outlet } from 'react-router-dom';
 import { useAuth } from '@clerk/clerk-react';
@@ -29,36 +28,34 @@ const App: React.FC = () => {
         {/* Header */}
         <AppBar position="sticky" elevation={1}>
           <Toolbar className="app-toolbar">
-            <Container maxWidth="lg" sx={{ width: '100%' }}>
-              <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <Typography
-                  variant="h4"
-                  component="div"
-                  className="app-title"
-                  sx={{
-                    background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                    backgroundClip: 'text',
-                  }}
-                >
-                  Hariprabodham Smrutis
-                </Typography>
+            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', px: { xs: 2, sm: 3, md: 4 } }}>
+              <Typography
+                variant="h4"
+                component="div"
+                className="app-title"
+                sx={{
+                  background: `linear-gradient(135deg, ${theme.palette.primary.main}, ${theme.palette.primary.dark})`,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                }}
+              >
+                Hariprabodham Smrutis
+              </Typography>
 
-                {/* User Button Component - displays user profile and settings */}
-                {isSignedIn && (
-                  <UserButton
-                    appearance={{
-                      elements: {
-                        userButtonAvatarBox: 'w-10 h-10',
-                        userButtonTrigger:
-                          'focus-visible:outline-none rounded-full',
-                      },
-                    }}
-                  />
-                )}
-              </Box>
-            </Container>
+              {/* User Button Component - displays user profile and settings */}
+              {isSignedIn && (
+                <UserButton
+                  appearance={{
+                    elements: {
+                      userButtonAvatarBox: 'w-10 h-10',
+                      userButtonTrigger:
+                        'focus-visible:outline-none rounded-full',
+                    },
+                  }}
+                />
+              )}
+            </Box>
           </Toolbar>
         </AppBar>
 
@@ -80,18 +77,18 @@ const App: React.FC = () => {
           sx={{
             backgroundColor: theme.palette.background.paper,
             paddingY: { xs: 2, sm: 3 },
+            width: '100%',
+            px: { xs: 2, sm: 3, md: 4 },
           }}
         >
-          <Container maxWidth="lg">
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              align="center"
-              className="app-footer-text"
-            >
-              © {new Date().getFullYear()} Hariprabodham Germany. All rights reserved.
-            </Typography>
-          </Container>
+          <Typography
+            variant="body2"
+            color="text.secondary"
+            align="center"
+            className="app-footer-text"
+          >
+            © {new Date().getFullYear()} Hariprabodham Germany. All rights reserved.
+          </Typography>
         </Box>
       </Box>
     </ThemeProvider>
