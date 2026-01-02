@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Alert } from '@mui/material';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
 import { createVideo } from '../../services/videoService';
+import { getAllThemes } from '../../services/themeService';
 import { extractYouTubeId } from '../../utils/extractYouTubeId';
 import './styles/add-video-modal.css';
+import { useAuth } from '@clerk/clerk-react';
+import { Theme } from '../../types/theme';
 
 interface AddVideoModalProps {
   open: boolean;
@@ -25,11 +28,46 @@ export const AddVideoModal: React.FC<AddVideoModalProps> = ({
   const [youtubeLink, setYoutubeLink] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [themes, setThemes] = useState<Theme[]>([]);
+  const [selectedThemes, setSelectedThemes] = useState<string[]>([]);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [themesLoading, setThemesLoading] = useState(true);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  const {userId} = useAuth();
+
+  useEffect(() => {
+    fetchThemes();
+  }, []);
+
+  const fetchThemes = async () => {
+    try {
+      setThemesLoading(true);
+      const data = await getAllThemes();
+      setThemes(data);
+    } catch (err) {
+      console.error('Error fetching themes:', err);
+    } finally {
+      setThemesLoading(false);
+    }
+  };
+
+  const handleAddTheme = (themeId: string) => {
+    if (!selectedThemes.includes(themeId)) {
+      setSelectedThemes([...selectedThemes, themeId]);
+    }
+  };
+
+  const handleRemoveTheme = (themeId: string) => {
+    setSelectedThemes(selectedThemes.filter(id => id !== themeId));
+  };
 
   const handleClose = () => {
     setTitle('');
     setYoutubeLink('');
     setError('');
+    setSelectedThemes([]);
+    setDropdownOpen(false);
     onClose();
   };
 
@@ -58,14 +96,15 @@ export const AddVideoModal: React.FC<AddVideoModalProps> = ({
     try {
       await createVideo({
         title: title.trim(),
-        description: '',
         youtube_video_id: youtubeId,
-        is_active: true,
+        created_by: userId || '',
+        theme_ids: selectedThemes,
       });
 
       // Reset form and close modal
       setTitle('');
       setYoutubeLink('');
+      setSelectedThemes([]);
       
       if (onSuccess) {
         onSuccess();
@@ -111,6 +150,58 @@ export const AddVideoModal: React.FC<AddVideoModalProps> = ({
           onChange={(e) => setYoutubeLink(e.target.value)}
           disabled={loading}
         />
+
+        {/* Themes Dropdown */}
+        <div className="add-video-form-group">
+          <label className="add-video-form-label">Themes</label>
+          <div className="add-video-form-themes" ref={dropdownRef}>
+            <div className="add-video-form-tags">
+              {selectedThemes.map(id => {
+                const theme = themes.find(t => t.id === id);
+                if (!theme) return null;
+                return (
+                  <span key={id} className="add-video-form-tag">
+                    {theme.title}
+                    <button
+                      type="button"
+                      className="add-video-form-tag-remove"
+                      onClick={() => handleRemoveTheme(id)}
+                      aria-label={`Remove ${theme.title}`}
+                      disabled={loading}
+                    >
+                      ×
+                    </button>
+                  </span>
+                );
+              })}
+            </div>
+            <button
+              type="button"
+              className="add-video-form-themes-button"
+              onClick={() => setDropdownOpen(v => !v)}
+              disabled={loading || themesLoading}
+            >
+              {selectedThemes.length === 0 ? 'Select themes...' : 'Add more themes'}
+            </button>
+            {dropdownOpen && (
+              <div className="add-video-form-dropdown">
+                {themes.filter(theme => !selectedThemes.includes(theme.id)).length === 0 ? (
+                  <div className="add-video-form-dropdown-empty">No more themes</div>
+                ) : (
+                  themes.filter(theme => !selectedThemes.includes(theme.id)).map(theme => (
+                    <div
+                      key={theme.id}
+                      className="add-video-form-dropdown-item"
+                      onClick={() => handleAddTheme(theme.id)}
+                    >
+                      {theme.title}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+        </div>
       </Box>
     </Modal>
   );

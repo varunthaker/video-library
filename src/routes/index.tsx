@@ -1,27 +1,36 @@
 import { RouteObject } from 'react-router-dom';
 import { NotFound } from '../pages/NotFound';
-import HomePage from '../pages/auth/HomePage';
 import LoginPage from '../pages/auth/LoginPage';
-import { Dashboard } from '../pages/Dashboard';
+import { ThemesPage } from '../pages/ThemesPage';
+import { ThemeVideos } from '../pages/ThemeVideos';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 // Public routes
 export const publicRoutes: RouteObject[] = [
-  {
-    path: '/',
-    element: <HomePage />,
-    index: true,
-  },
   {
     path: '/login',
     element: <LoginPage />,
   },
 ];
 
-// Protected routes (for future authentication)
+// Protected routes (requires authentication)
 export const protectedRoutes: RouteObject[] = [
   {
-    path: '/dashboard',
-    element: <Dashboard />,
+    path: '/',
+    element: (
+      <ProtectedRoute>
+        <ThemesPage />
+      </ProtectedRoute>
+    ),
+    index: true,
+  },
+  {
+    path: '/themes/:id',
+    element: (
+      <ProtectedRoute>
+        <ThemeVideos />
+      </ProtectedRoute>
+    ),
   },
 ];
 

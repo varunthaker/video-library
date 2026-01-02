@@ -1,15 +1,14 @@
 export interface Video {
   id: string;
   title: string;
-  description: string;
   youtube_video_id: string;
-  is_active: boolean;
   created_at: string;
+  created_by: string;
 }
 
 export interface VideoFormData {
   title: string;
-  description: string;
   youtube_video_id: string;
-  is_active: boolean;
+  created_by: string;
+  theme_ids: string[];
 }

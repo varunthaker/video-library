@@ -11,7 +11,6 @@ export async function getAllVideos(): Promise<Video[]> {
     const { data, error } = await supabase
       .from(VIDEOS_TABLE)
       .select('*')
-      .eq('is_active', true)
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -22,38 +21,44 @@ export async function getAllVideos(): Promise<Video[]> {
   }
 }
 
-/**
- * Fetch a single video by ID
- */
-export async function getVideoById(id: string): Promise<Video | null> {
-  try {
-    const { data, error } = await supabase
-      .from(VIDEOS_TABLE)
-      .select('*')
-      .eq('id', id)
-      .single();
 
-    if (error && error.code !== 'PGRST116') throw error;
-    return data as Video | null;
-  } catch (error) {
-    console.error('Error fetching video:', error);
-    throw error;
-  }
-}
 
 /**
  * Create a new video
  */
 export async function createVideo(videoData: VideoFormData): Promise<Video> {
   try {
-    const { data, error } = await supabase
+    // Extract theme_ids from videoData
+    const { theme_ids, ...videoWithoutThemes } = videoData;
+
+    // Step 1: Create the video first
+    const { data: createdVideo, error: videoError } = await supabase
       .from(VIDEOS_TABLE)
-      .insert([videoData])
+      .insert([videoWithoutThemes])
       .select()
       .single();
 
-    if (error) throw error;
-    return data as Video;
+    if (videoError) throw videoError;
+    if (!createdVideo) throw new Error('Failed to create video');
+
+    // Step 2: If theme_ids are provided, create theme_video relationships
+    if (theme_ids && theme_ids.length > 0) {
+      const themeVideoRecords = theme_ids.map(theme_id => ({
+        theme_id,
+        video_id: createdVideo.id,
+      }));
+
+      const { error: themeError } = await supabase
+        .from('theme_videos')
+        .insert(themeVideoRecords);
+
+      if (themeError) {
+        // Log error but don't fail - video was created successfully
+        console.error('Error linking themes to video:', themeError);
+      }
+    }
+
+    return createdVideo as Video;
   } catch (error) {
     console.error('Error creating video:', error);
     throw error;
@@ -96,6 +101,33 @@ export async function deleteVideo(id: string): Promise<void> {
     if (error) throw error;
   } catch (error) {
     console.error('Error deleting video:', error);
+    throw error;
+  }
+}
+
+/**
+ * Fetch all videos for a specific theme
+ */
+export async function getVideosByTheme(themeId: string): Promise<Video[]> {
+  try {
+    const { data, error } = await supabase
+      .from('theme_videos')
+      .select(`
+        id,
+        theme_id,
+        video_id,
+        created_at,
+        videos (*)
+      `)
+      .eq('theme_id', themeId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    
+    // Map the response to extract video data
+    return data?.map((item: any) => item.videos) as Video[];
+  } catch (error) {
+    console.error('Error fetching videos for theme:', error);
     throw error;
   }
 }
