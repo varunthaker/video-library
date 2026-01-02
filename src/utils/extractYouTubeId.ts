@@ -27,7 +27,14 @@ export function extractYouTubeId(url: string): string | null {
 
 /**
  * Generate YouTube nocookie embed URL from video ID with restricted controls
+ * - autoplay=1: Auto-play when modal opens
+ * - muted=1: Required for auto-play without user interaction
+ * - controls=0: Hide YouTube controls (we use custom controls)
+ * - rel=0: No related videos
+ * - modestbranding=1: Minimal YouTube branding
+ * - fs=1: Enable fullscreen via API
+ * - disablekb=1: Disable keyboard controls
  */
 export function getYouTubeEmbedUrl(videoId: string): string {
-  return `https://www.youtube-nocookie.com/embed/${videoId}?rel=0&modestbranding=1`;
+  return `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&muted=1&controls=0&rel=0&modestbranding=1&fs=1&disablekb=1`;
 }

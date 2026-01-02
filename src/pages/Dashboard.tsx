@@ -6,6 +6,7 @@ import { Loader } from '../components/ui/Loader';
 import { AddVideoModal } from '../components/video/AddVideoModal';
 import { useVideos } from '../hooks/useVideos';
 import '../styles/dashboard.css';
+import { useUserRole } from '../hooks/useUserRole';
 
 /**
  * Dashboard page - displays all videos in a responsive grid
@@ -19,8 +20,7 @@ export const Dashboard: React.FC = () => {
   const { videos, loading, error, refetch } = useVideos();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  console.log('Videos:', videos);
-
+  const {  isAdmin }= useUserRole();
 
   return (
     <Container maxWidth="xl">
@@ -29,16 +29,6 @@ export const Dashboard: React.FC = () => {
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 2 }}>
           <Box>
             <Typography
-              variant="h1"
-              component="h1"
-              className="dashboard-title"
-              sx={{
-                fontSize: { xs: '1.75rem', sm: '2rem', md: '2.5rem', lg: '3rem' },
-              }}
-            >
-              Video Library
-            </Typography>
-            <Typography
               variant="body1"
               color="text.secondary"
               className="dashboard-subtitle"
@@ -46,22 +36,20 @@ export const Dashboard: React.FC = () => {
                 fontSize: { xs: '0.95rem', sm: '1rem', md: '1.1rem' },
               }}
             >
-              Explore our collection of videos and discover amazing content
+              Prabodhswamiji's Smruti's in Germany
             </Typography>
           </Box>
-          <Button
+          {isAdmin && <Button
             variant="contained"
             color="primary"
-            startIcon={<AddIcon />}
             onClick={() => setIsModalOpen(true)}
             sx={{
               whiteSpace: 'nowrap',
-              padding: { xs: '8px 12px', sm: '10px 16px' },
+              padding: { xs: '4px 8px', sm: '8px 16px' },
               fontSize: { xs: '0.875rem', sm: '1rem' },
             }}
-          >
-            Add Video
-          </Button>
+          ><AddIcon />
+          </Button>}
         </Box>
       </Box>
 
