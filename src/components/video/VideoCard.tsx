@@ -45,6 +45,10 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
     playerRef.current = event.target;
   };
 
+    const onError = (event: { data: number }) => {
+    console.error('YouTube player error for video:', video.youtube_video_id, 'Error code:', event.data);
+  };
+
   const playerOpts = {
     playerVars: {
       controls: 0,
@@ -128,6 +132,7 @@ export const VideoCard: React.FC<VideoCardProps> = ({ video }) => {
               videoId={video.youtube_video_id}
               opts={playerOpts}
               onReady={onReady}
+              onError={onError}
             />
           </Box>
 
